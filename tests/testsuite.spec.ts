@@ -94,9 +94,8 @@ test('edit client', async ({ page }) => {
     await editClient.clientView.click();
     await editClient.dotsBtn.click();
     await editClient.editClientBtn.click();
-    await editClient.name.fill('Eva Bogren');
-    await editClient.email.fill('EvaBogren@gmail.com');
-    await editClient.telephone.fill('072-7268408');
+    await editClient.name.fill('Maja Svensson');
+    await editClient.email.fill('MajaSvensson@gmail.com');
     await editClient.save.click();
     await expect(page.locator('#app > div > div.clients > div:nth-child(1)')).toBeVisible();
 
