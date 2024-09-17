@@ -5,6 +5,7 @@ import { CreateBill } from './pages/create-bills-page';
 import { DeleteBills } from './pages/delete-bills-page';
 import { CreateClient } from './pages/create-client-page';
 import { CreateRoom } from './pages/create-room-page';
+import { EditClient } from './pages/edit-client-page';
 
 test.describe('Test suite 01', () => {
 
@@ -85,4 +86,20 @@ test('create room', async ({ page }) => {
   await expect(page.locator('#app > div > div.rooms > div:nth-child(3)')).toBeVisible();
 
 });
+test('edit client', async ({ page }) => {
+  const editClient = new EditClient(page);
+  const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`);
+    await editClient.clientView.click();
+    await editClient.dotsBtn.click();
+    await editClient.editClientBtn.click();
+    await editClient.name.fill('Eva Bogren');
+    await editClient.email.fill('EvaBogren@gmail.com');
+    await editClient.telephone.fill('072-7268408');
+    await editClient.save.click();
+    await expect(page.locator('#app > div > div.clients > div:nth-child(1)')).toBeVisible();
+
+  });
+
 });
