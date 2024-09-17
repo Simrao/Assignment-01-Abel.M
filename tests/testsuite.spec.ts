@@ -6,6 +6,7 @@ import { DeleteBills } from './pages/delete-bills-page';
 import { CreateClient } from './pages/create-client-page';
 import { CreateRoom } from './pages/create-room-page';
 import { EditClient } from './pages/edit-client-page';
+import { CreateReservation } from './pages/create-reservation-page';
 
 test.describe('Test suite 01', () => {
 
@@ -99,6 +100,22 @@ test('edit client', async ({ page }) => {
     await editClient.save.click();
     await expect(page.locator('#app > div > div.clients > div:nth-child(1)')).toBeVisible();
 
+  });
+  test('create reservation', async ({ page }) => {
+    const createreservation = new CreateReservation(page);
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`)
+    await createreservation.reservationView.click();
+    await createreservation.createReservationBtn.click();
+    await createreservation.Start.fill('2024-09-10');
+    await createreservation.End.fill('2024-09-15');
+    await createreservation.Client.selectOption({ index: 2 }); 
+    await createreservation.Room.selectOption({ index: 2 });
+    await createreservation.Bill.selectOption({ index: 0 });
+    await createreservation.save.click();
+    await expect(page.locator('#app > div > div.reservations > div:nth-child(2) > div.end')).toBeVisible();
+  
   });
 
 });
