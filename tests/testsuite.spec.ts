@@ -134,7 +134,16 @@ test('edit client', async ({ page }) => {
     await editreservation.save.click();
     await expect(page.locator('#app > div > div.reservations > div:nth-child(2) > h3')).toBeVisible();
    
-  
-  });
 
+  });
+  test('unsuccesfull login by wrong password', async ({ page }) => {
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await page.locator('input[type="text"]').fill(`${process.env.TEST_USERNAME}`);
+    await loginPage.passwordTextfield.fill('summer24');
+    await page.getByRole('button', { name: 'Login' }).click();
+    await expect(page.locator('#app > div > div')).toBeVisible();
+  });
+  
 });
+
