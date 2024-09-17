@@ -4,6 +4,7 @@ import { DashboardPage } from './pages/dashboard-page';
 import { CreateBill } from './pages/create-bills-page';
 import { DeleteBills } from './pages/delete-bills-page';
 import { CreateClient } from './pages/create-client-page';
+import { CreateRoom } from './pages/create-room-page';
 
 test.describe('Test suite 01', () => {
 
@@ -67,4 +68,21 @@ test('create client', async ({ page }) => {
 
 });
 
+test('create room', async ({ page }) => {
+  const createRoom = new CreateRoom(page);
+  const loginPage = new LoginPage(page);
+  await loginPage.goto();
+  await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`)
+  await createRoom.roomView.click();
+  await createRoom.createRoomBtn.click();
+  await createRoom.category.selectOption({index: 1});
+  await createRoom.number.fill('205');
+  await createRoom.floor.fill('2');
+  await createRoom.available.click();
+  await createRoom.price.fill('9200');
+  await createRoom.features.selectOption({index: 1});
+  await createRoom.save.click();
+  await expect(page.locator('#app > div > div.rooms > div:nth-child(3)')).toBeVisible();
+
+});
 });
