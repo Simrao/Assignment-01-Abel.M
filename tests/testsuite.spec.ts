@@ -136,7 +136,7 @@ test('edit client', async ({ page }) => {
    
 
   });
-  test('unsuccesfull login by wrong password', async ({ page }) => {
+  test('unsuccessfull login by wrong password', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
     await page.locator('input[type="text"]').fill(`${process.env.TEST_USERNAME}`);
