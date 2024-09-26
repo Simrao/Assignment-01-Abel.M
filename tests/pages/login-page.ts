@@ -27,4 +27,7 @@ export class LoginPage {
       await this.passwordTextfield.fill(password);
       await this.loginButton.click();
     }
+    async verifyLoginSuccess() {
+      await expect(this.page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
+    }
   }

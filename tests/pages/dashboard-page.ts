@@ -14,5 +14,6 @@ export class DashboardPage {
 
    async performLogout() {
     await this.logoutButton.click();
+    await expect(this.page.getByRole('heading', { name: 'Login' })).toBeVisible();
   }
 }

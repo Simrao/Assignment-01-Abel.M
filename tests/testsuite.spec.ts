@@ -12,61 +12,58 @@ import { EditReservation } from './pages/edit-reservation-page';
 test.describe('Test suite 01', () => {
 
   test.beforeEach(async ({ page }) => {
-    console.log('Login user before each test');
-    const loginpage = new LoginPage(page);
-    await loginpage.goto();
-    await loginpage.performLogin(`${process.env.TEST_USERNAME}`,`${process.env.TEST_PASSWORD}`);
+    const loginPage = new LoginPage(page);
+  const dashboardPage = new DashboardPage(page);
+
+  await loginPage.goto();
+  await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`);
+
+  await dashboardPage.performLogout();
   });
 
   test('successfull login', async ({ page }) => {
     const loginPage = new LoginPage(page);
-    const dashboardPage = new DashboardPage(page);
-    await loginPage.goto();
-    await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`)
-    await expect(page.getByRole('heading', { name: 'Tester Hotel Overview' })).toBeVisible();
-    await dashboardPage.performLogout();
-    await expect(page.getByRole('heading', { name: 'Login' })).toBeVisible();
-    await page.waitForTimeout(5000);
+  const dashboardPage = new DashboardPage(page);
+
+  await loginPage.goto();
+  await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`);
+
+  await dashboardPage.performLogout();
   });
 
 
 test('create bill', async ({ page }) => {
   const createBill = new CreateBill(page);
   const loginPage = new LoginPage(page);
+
   await loginPage.goto();
-  await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`)
-  await createBill.billsView.click();
-  await createBill.createBillBtn.click();
-  await createBill.value.fill('5000');
-  await createBill.save.click();
-  await expect(page.locator('#app > div > div.bills > div:nth-child(2) > h3')).toBeVisible();
+  await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`);
+
+  await createBill.createNewBill('5000');
+  await createBill.verifyBillCreated();
 
 
 });
 
 test('delete bill', async ({ page }) => {
-    const deleteBills = new DeleteBills(page);
-    const loginPage = new LoginPage(page);
-    await loginPage.goto();
-    await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`)
-    await deleteBills.billsView.click();
-    await deleteBills.dotsBtn.click();
-    await deleteBills.deleteBtn.click();
-    await expect(page.locator('#app > div > div.bills > div:nth-child(1) > div.paid')).toBeVisible();
+  const deleteBills = new DeleteBills(page);
+  const loginPage = new LoginPage(page);
+
+  await loginPage.goto();
+  await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`);
+  await deleteBills.deleteFirstBill();
+  await deleteBills.verifyBillDeleted();
 
 });
 test('create client', async ({ page }) => {
   const createClient = new CreateClient(page);
   const loginPage = new LoginPage(page);
+
   await loginPage.goto();
-  await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`)
-  await createClient.clientView.click();
-  await createClient.createClientBtn.click();
-  await createClient.name.fill('Thomas Berggren');
-  await createClient.email.fill('ThomasBerggren@gmail.com');
-  await createClient.telephone.fill('073-4325030');
-  await createClient.save.click();
-  await expect(page.locator('#app > div > div.clients > div:nth-child(3)')).toBeVisible();
+  await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`);
+
+  await createClient.createClient('Thomas Bergren', 'ThomasBerggren@gmail.com', '073-4325030');
+  await createClient.verifyClientCreated();
 
 
 });
@@ -74,74 +71,57 @@ test('create client', async ({ page }) => {
 test('create room', async ({ page }) => {
   const createRoom = new CreateRoom(page);
   const loginPage = new LoginPage(page);
+
   await loginPage.goto();
-  await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`)
-  await createRoom.roomView.click();
-  await createRoom.createRoomBtn.click();
-  await createRoom.category.selectOption({index: 1});
-  await createRoom.number.fill('205');
-  await createRoom.floor.fill('2');
-  await createRoom.available.click();
-  await createRoom.price.fill('9200');
-  await createRoom.features.selectOption({index: 1});
-  await createRoom.save.click();
-  await expect(page.locator('#app > div > div.rooms > div:nth-child(3)')).toBeVisible();
+  await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`);
+  await createRoom.createNewRoom({
+    roomNumber: '205',
+    floor: '4',
+    price: '9200',
+    categoryIndex: 1,
+    featureIndex: 0
+  });
+  await createRoom.verifyRoomCreated();
 
 });
 test('edit client', async ({ page }) => {
   const editClient = new EditClient(page);
   const loginPage = new LoginPage(page);
-    await loginPage.goto();
-    await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`);
-    await editClient.clientView.click();
-    await editClient.dotsBtn.click();
-    await editClient.editClientBtn.click();
-    await editClient.name.fill('Maja Svensson');
-    await editClient.email.fill('MajaSvensson@gmail.com');
-    await editClient.save.click();
-    await expect(page.locator('#app > div > div.clients > div:nth-child(1)')).toBeVisible();
+
+  await loginPage.goto();
+  await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`);
+  await editClient.editClient('Maja Svensson', 'MajaSvensson@gmail.com', '073-3478030');
+  await editClient.verifyClientEdited();
 
   });
   test('create reservation', async ({ page }) => {
-    const createreservation = new CreateReservation(page);
+    const editReservation = new EditReservation(page);
     const loginPage = new LoginPage(page);
+  
     await loginPage.goto();
-    await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`)
-    await createreservation.reservationView.click();
-    await createreservation.createReservationBtn.click();
-    await createreservation.Start.fill('2024-09-10');
-    await createreservation.End.fill('2024-09-15');
-    await createreservation.Client.selectOption({ index: 2 }); 
-    await createreservation.Room.selectOption({ index: 2 });
-    await createreservation.Bill.selectOption({ index: 0 });
-    await createreservation.save.click();
-    await expect(page.locator('#app > div > div.reservations > div:nth-child(2) > div.end')).toBeVisible();
+    await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`);
+  
+    await editReservation.editExistingReservation('2024-09-10', '2024-09-15', 2, 2, 0);
+    await editReservation.verifyReservationEdited();
   
   });
   test('edit reservation', async ({ page }) => {
-    const editreservation = new EditReservation(page);
+    const editReservation = new EditReservation(page);
     const loginPage = new LoginPage(page);
+  
     await loginPage.goto();
-    await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`)
-    await editreservation.reservationView.click();
-    await editreservation.dotsBtn.click();
-    await editreservation.editReservationBtn.click();
-    await editreservation.start.fill('2024-10-11');
-    await editreservation.end.fill('2024-10-14');
-    await editreservation.client.selectOption({ index: 1 });
-    await editreservation.room.selectOption({ index: 1 });
-    await editreservation.bill.selectOption({ index: 1 });
-    await editreservation.save.click();
-    await expect(page.locator('#app > div > div.reservations > div:nth-child(2) > h3')).toBeVisible();
+    await loginPage.performLogin(`${process.env.TEST_USERNAME}`, `${process.env.TEST_PASSWORD}`);
+  
+    await editReservation.editExistingReservation('2024-10-11', '2024-10-14',1 , 1, 1);
+    await editReservation.verifyReservationEdited();
    
 
   });
   test('unsuccessfull login by wrong password', async ({ page }) => {
     const loginPage = new LoginPage(page);
     await loginPage.goto();
-    await page.locator('input[type="text"]').fill(`${process.env.TEST_USERNAME}`);
-    await loginPage.passwordTextfield.fill('summer24');
-    await page.getByRole('button', { name: 'Login' }).click();
+    await loginPage.performLogin('tester01', 'summer24');
+  ;
     await expect(page.locator('#app > div > div')).toBeVisible();
   });
   

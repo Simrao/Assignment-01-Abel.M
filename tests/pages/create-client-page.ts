@@ -21,4 +21,16 @@ export class CreateClient {
     this.save = page.locator('#app > div > div.actions > a.btn.blue')
   }
 
+  async createClient(clientName: string, clientEmail: string, clientPhone: string) {
+    await this.clientView.click();
+    await this.createClientBtn.click();
+    await this.name.fill(clientName);
+    await this.email.fill(clientEmail);
+    await this.telephone.fill(clientPhone);
+    await this.save.click();
+  }
+
+  async verifyClientCreated() {
+    await expect(this.page.locator('#app > div > div.clients > div:nth-child(3)')).toBeVisible();
+  }
 }

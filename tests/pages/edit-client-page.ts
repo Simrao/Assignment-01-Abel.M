@@ -25,4 +25,17 @@ export class EditClient {
     this.aftersave = page.locator ('#app > div > div.clients > div:nth-child(1)')
   }
 
+  async editClient(clientName: string, clientEmail: string, clientPhone: string) {
+    await this.clientView.click();
+    await this.dotsBtn.click();
+    await this.editClientBtn.click();
+    await this.name.fill(clientName);
+    await this.email.fill(clientEmail);
+    await this.telephone.fill(clientPhone);
+    await this.save.click();
+  }
+
+  async verifyClientEdited() {
+    await expect(this.aftersave).toBeVisible();
+  }
 }
